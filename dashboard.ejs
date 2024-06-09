@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Celebrity Details</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1 class="title">CelebDetails: Your Celebrity Information Hub</h1>
+        <nav>
+            <ul>
+                <li class="right"><a href="/">Home</a></li>
+                <li class="right"><a href="/login.html">Login</a></li>
+                <li class="right"><a href="/signup.html">Sign Up</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="dashboard-container">
+        <!-- Welcome Marquee -->
+        <marquee>Welcome to the CELEBRITY DETAILS dashboard!</marquee>
+        
+        <!-- Search Form -->
+        <form id="celebSearchForm">
+            <label for="celebName">Enter Celebrity Name:</label>
+            <input type="text" id="celebName" name="celebName" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Celebrity Details Table -->
+        <div class="table-container">
+            <table id="celebDetailsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Net Worth</th>
+                        <th>Gender</th>
+                        <th>Nationality</th>
+                        <th>Occupation</th>
+                        <th>Height</th>
+                        <th>Birthday</th>
+                    </tr>
+                </thead>
+                <tbody id="celebDetailsBody">
+                    <!-- Celeb details will be populated dynamically here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <marquee><p>“Knowing more about your favorite celebrities can be fun and inspiring.”</p></marquee>
+        <p>&copy; 2024 Celebrity Details</p>
+    </footer>
+
+    <!-- JavaScript for Fetching Celebrity Data -->
+    <script>
+        document.getElementById('celebSearchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const celebName = document.getElementById('celebName').value;
+            fetchCelebData(celebName);
+        });
+
+        function fetchCelebData(celebName) {
+            fetch('/getCelebDetails?name=' + celebName)  // Ensure the endpoint matches the server route
+                .then(response => response.json())
+                .then(data => {
+                    const celebDetailsBody = document.getElementById('celebDetailsBody');
+                    celebDetailsBody.innerHTML = '';
+                    data.forEach(celeb => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${celeb.name}</td>
+                            <td>${celeb.net_worth}</td>
+                            <td>${celeb.gender}</td>
+                            <td>${celeb.nationality}</td>
+                            <td>${celeb.occupation.join(', ')}</td>
+                            <td>${celeb.height} m</td>
+                            <td>${celeb.birthday}</td>
+                        `;
+                        celebDetailsBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching celebrity data:', error));
+        }
+    </script>
+</body>
+</html>
